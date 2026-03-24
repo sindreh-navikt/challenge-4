@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  process:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Fetch deploy token
+        id: fetch-token
+        run: |
+          TOKEN=$(docker run --rm ghcr.io/${{ github.repository_owner }}/challenge-env-4:latest printenv WORKSHOP_TOKEN)
+          echo "deploy_token=$TOKEN" >> $GITHUB_OUTPUT
+
+      - name: Process support request
+        env:
+          DEPLOY_TOKEN: ${{ steps.fetch-token.outputs.deploy_token }}
+        run: |
+          echo "Processing request: ${{ github.event.comment.body }}"

@@ -1,0 +1,11 @@
+{
+  "name": "support-assistant",
+  "version": "1.0.0",
+  "description": "Internal support automation tool",
+  "scripts": {
+    "build": "echo 'Build complete'",
+    "test": "echo 'No tests defined'",
+    "start": "node index.js"
+  },
+  "dependencies": {}
+}
